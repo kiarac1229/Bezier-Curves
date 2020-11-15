@@ -1,0 +1,252 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Bezier Curves</title>
+
+<script>
+  /*
+     * Name:  Kiara Correa Acosta
+     * Date October 19, 2020
+  */
+  
+    var canvas;    // DOM object corresponding to the canvas
+    var graphics;  // 2D graphics context for drawing on the canvas
+    var numpoints;
+    var step = 0.10;
+
+    function draw() {
+        // set up control points
+        var p0 = [200, 70];
+        var p1 = [200, 260];
+
+        var r1 = [30, 10];
+
+        var q1 = [300,10];
+        var q2 = [330,100];
+
+        // draw 3 bezier curves, all starting at p0 and ending at p1
+        bezierLine(p0, p1);
+        bezierQuad(p0, r1, p1);
+        graphics.closePath();
+        graphics.stroke(); 
+        graphics.fill();   // fill shape
+        
+        bezierCubic(p0, q1, q2, p1);
+        graphics.closePath();
+        graphics.stroke(); 
+        graphics.fill();   // fill shape
+
+        // notice the difference between the quadratic and cubic curves
+        letterK();
+        letterC();
+        letterA();
+        middleA();
+    }
+    function bezierLineHelper(t, p0, p1) {
+        x = (1-t)*(p0[0]) + t*p1[0];
+        y = (1-t)*(p0[1]) + t*p1[1];
+        return [x,y];
+    }
+    function bezierLine(p0,p1){
+        //graphics.moveTo(p0[0], p0[1]);
+        for(t = 0; t < 1; t = t + step){
+          pointArray = bezierLineHelper(t, p0, p1);
+          graphics.lineTo(pointArray[0],pointArray[1]);
+   
+        }
+    }
+    function bezierQuadHelper(t, p0, p1, p2) {
+      line1Array = bezierLineHelper(t, p0,p1);
+      line2Array = bezierLineHelper(t, p1,p2);
+      line3 = bezierLineHelper(t, line1Array,line2Array);
+      return line3;
+    }
+    function bezierQuad(p0,p1,p2){
+        graphics.moveTo(p0[0], p0[1]);
+          for(t = 0; t < 1; t = t + step){
+            pointArray = bezierQuadHelper(t, p0, p1, p2);
+            graphics.lineTo(pointArray[0],pointArray[1]); 
+        }
+    }
+
+    function bezierCubicHelper(t, p0, p1, p2, p3){
+      line1Array = bezierLineHelper(t, p0,p1);
+      line2Array = bezierLineHelper(t, p1,p2);
+      line3Array = bezierLineHelper(t, p2,p3);
+      line4 = bezierQuadHelper(t,line1Array,line2Array,line3Array)
+      return line4;
+    }
+
+    function bezierCubic(p0,p1,p2,p3){
+      graphics.moveTo(p0[0], p0[1]);
+        for(t = 0; t < 1; t = t + step){
+          pointArray = bezierCubicHelper(t,p0,p1,p2,p3);
+          graphics.lineTo(pointArray[0],pointArray[1]); 
+        }
+    }
+
+    function letterK(){
+      graphics.beginPath();
+      // first vertical 
+      p0 = [40,305];
+      p1 = [40,470];
+      graphics.moveTo(p0,p1);
+      bezierLine(p0,p1);
+
+       //horizontal bottom
+      p0 = [40,470];
+      p1 = [70,470];
+      bezierLine(p0,p1);
+
+       // vertical bottom 
+      p0 = [70,470];
+      p1 = [70,420];
+      bezierLine(p0,p1);
+
+      // diagonal bottom
+      p0 = [70,420];
+      p1 = [90,470];
+      bezierLine(p0,p1);
+
+      //horizontal bottom 2
+      p0 = [90,470];
+      p1 = [120,470];
+      bezierLine(p0,p1);
+
+      //bottom to middle
+      p0 = [120,470];
+      p1 = [90, 390];
+      bezierLine(p0,p1);
+
+       // middle to top
+      p0 = [90, 390];
+      p1 = [120,310];
+      bezierLine(p0,p1);
+      
+       //horizontal top 2
+      p0 = [120,310];
+      p1 = [90,310];
+      bezierLine(p0,p1);
+
+      // diagonal top
+      p0 = [90,310];
+      p1 = [70,370];
+      bezierLine(p0,p1);
+
+      // vertical top 
+      p0 = [70,370];
+      p1 = [70,310];
+      bezierLine(p0,p1);
+
+      //horizontal top
+      p0 = [70,310];
+      p1 = [40,310];
+      bezierLine(p0,p1);  
+
+      graphics.stroke(); // draw outline
+      graphics.fill();   // fill shape
+    }
+
+    function letterC(){
+      graphics.beginPath();
+      // top vertical
+      p0 = [240, 305];
+      p1 = [240, 345];
+      graphics.moveTo(p0,p1);
+      bezierLine(p0,p1);
+
+      // inside curve
+      p0 = [240, 340];
+      p1 = [160, 340];
+      p2 = [160, 440];
+      p3 = [240, 440];
+      graphics.moveTo(p0,p1);
+      bezierCubic(p0,p1,p2,p3);
+
+      // bottom vertical
+      p0 = [240, 440];
+      p1 = [240, 475];
+      graphics.moveTo(p0,p1);
+      bezierLine(p0,p1);
+
+       // outside curve
+      p3 = [240, 310];
+      p2 = [100, 310];
+      p1 = [100, 470];
+      p0 = [240, 470];
+      graphics.moveTo(p0,p1);
+      bezierCubic(p0,p1,p2,p3);
+
+      graphics.stroke(); // draw outline
+      graphics.fill();   // fill shape
+    }
+
+    function letterA(){
+      graphics.beginPath();
+      // top curve
+      p0 = [270,470];
+      p1 = [340,145];
+      p2 = [430,470];
+      graphics.moveTo(p0,p1);
+      bezierQuad(p0,p1,p2);
+
+      // bottom right horizontal
+      p0 = [420,470];
+      p1 = [375,470];
+      graphics.moveTo(p0,p1);
+      bezierLine(p0,p1);
+
+      // bottom connection
+      p0 = [380,470];
+      p1 = [340,350];
+      p2 = [310,470];      
+      graphics.moveTo(p0,p1);
+      bezierQuad(p0,p1,p2);
+
+       // bottom left horizontal 
+      p0 = [310,470];
+      p1 = [265,470];
+      graphics.moveTo(p0,p1);
+      bezierLine(p0,p1);
+
+      graphics.stroke(); // draw outline
+      graphics.fill();   // fill shape   
+    }
+
+function middleA(){
+    graphics.fillStyle = "white";
+    graphics.beginPath();
+     // middle curve
+      p0 = [320,390];
+      p1 = [340,300];
+      p2 = [370,390];
+      graphics.moveTo(p0,p1);
+      bezierQuad(p0,p1,p2);
+
+    // middle line (connection)
+      p0 = [370,390];
+      p1 = [315,390];
+      graphics.moveTo(p0,p1);
+      bezierLine(p0,p1);
+
+      graphics.stroke(); // draw outline
+      graphics.fill();   // fill shape
+
+}
+  
+    function init() {
+        canvas = document.getElementById("theCanvas");
+        graphics = canvas.getContext("2d");
+        graphics.strokeStyle = "MediumTurquoise";
+        graphics.lineWidth = 10;
+        graphics.fillStyle = "Orchid";
+        draw();  // draw something on the canvas
+    }
+</script>
+
+</head>
+<body onload="init()">
+    <canvas id="theCanvas" width="640" height="480"></canvas>
+</body>
+</html>
